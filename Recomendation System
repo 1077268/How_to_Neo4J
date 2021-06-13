@@ -1,0 +1,14 @@
+#Here I'm sharing the code for Cypher language in order to create a very simple recomendation system. 
+#First make sure to have your CSV the file in import file within your directory
+#To import the file on your working space use 
+LOAD CSV WITH HEADERS FROM "file///file_name.csv" as row 
+FIELDTERMINATOR ';'
+#Then create nodes and edges 
+MERGE (c:client{name:row.Customer_Name})
+MERGE (p:product{name:row.Product_Name}) 
+merge (c)-[:PURCHASED]-> (p) 
+#Choose a client and find the clients' products in common with other clients and other products that they bought also 
+MATCH (Keith:client{name:"Keith_Dawkins"})-[PURCHASED]->(p:product) <-[:PURCHASED]-(c:client)
+MATCH (c)-[:PURCHASED]-> WHERE NOT extists((Keith)-[:PURCHASED]->(rec))
+RETURN distinct rec.name
+#Here we will have a distinct list of the prodcuts bought by others but not by Keith.
